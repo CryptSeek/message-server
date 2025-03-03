@@ -13,11 +13,11 @@ def main():
     subscriber.setsockopt(zmq.RCVTIMEO, 600000)
 
     while True:
-        subscriber.connect("tcp://127.0.0.1:5555")
+        subscriber.connect("tcp://cryptseek.wycre.net:5555")
         print("Subscriber connected")
 
         while True:
-            msg = subscriber.recv()
+            msg = subscriber.recv_string()[2:-1]  # List slice is to fix the b'' which gets erroneously added to the string by the server
             print(msg)
 
 
