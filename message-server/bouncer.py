@@ -1,14 +1,18 @@
 from bottle import Bottle, run, request, response, get, post, template
 import requests
+import os
 
 # HTTP server to receive messages from clients
 app = Bottle()
 
 
+# Gateway URL
+gateway = f'http://{os.environ["GATEWAY_ADDRESS"]}/upload'
+
 def send_to_gateway(message):
     """Hand message off to gateway for transmission to subscribers"""
     print("Sending message to gateway: " + str(message))
-    requests.post("http://localhost:9091/upload", data=message)
+    requests.post(gateway, data=message)
     return 'OK\n'
 
 @app.route('/upload', method=['POST'])
@@ -25,6 +29,7 @@ def message_received():
 
 def main():
     print("Starting Bouncer")
+    print("GATEWAY_ADDRESS =", gateway)
     app.run(
         host='0.0.0.0',
         port=9090,

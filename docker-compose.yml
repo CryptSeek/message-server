@@ -1,0 +1,21 @@
+name: cryptseek
+services:
+
+  bouncer:
+    container_name: cryptseek-bouncer
+    ports:
+      - 9090:9090
+    environment:
+      PYTHONUNBUFFERED: 1
+      SERVER_TYPE: bouncer
+      GATEWAY_ADDRESS: "cryptseek-gateway:9091"
+    image: cryptseek:latest
+
+  gateway:
+    container_name: cryptseek-gateway
+    ports:
+      - 5555:5555
+    environment:
+      PYTHONUNBUFFERED: 1
+      SERVER_TYPE: gateway
+    image: cryptseek:latest

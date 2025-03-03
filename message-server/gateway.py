@@ -18,7 +18,7 @@ socket = context.socket(zmq.PUB)
 def push_message(content):
     """Spawned as a greenlet to push messages through ZMQ"""
     print("Pushing Message: " + str(content))
-    message = content.encode("utf-8")
+    message = str(content).encode("utf-8")
     socket.send(message)
     return 'OK\n'
 
