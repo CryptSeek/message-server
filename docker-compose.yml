@@ -1,21 +1,23 @@
 name: cryptseek
 services:
 
+  # The bouncer server receives messages from clients at the `/upload` path
   bouncer:
     container_name: cryptseek-bouncer
     ports:
       - 9090:9090
     environment:
-      PYTHONUNBUFFERED: 1
-      SERVER_TYPE: bouncer
-      GATEWAY_ADDRESS: "cryptseek-gateway:9091"
+      PYTHONUNBUFFERED: 1  # The test server will log messages sent to it, remove this to disable that behavior
+      SERVER_TYPE: bouncer  # The SERVER_TYPE variable must be set to either `bouncer` or `gateway`
+      GATEWAY_ADDRESS: "cryptseek-gateway:9091"  # This is REQUIRED for the bouncer server, set it to `<gateway-container-name>:9090`
     image: cryptseek:latest
 
+  # The gateway server retransmits messages to clients, by default it is open on port 5555
   gateway:
     container_name: cryptseek-gateway
     ports:
       - 5555:5555
     environment:
-      PYTHONUNBUFFERED: 1
+      PYTHONUNBUFFERED: 1  # The test server will log messages sent to it, remove this to disable that behavior
       SERVER_TYPE: gateway
     image: cryptseek:latest
