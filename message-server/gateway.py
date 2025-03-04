@@ -26,7 +26,7 @@ def push_message(content):
 @app.route('/upload', method=['POST'])
 def upload():
     """Receives messages from the bouncer and sends them to all subscribers"""
-    message_body = request.body.read()
+    message_body = request.body.read().decode("utf-8")
 
     print("Gateway Received: " + str(message_body))
 

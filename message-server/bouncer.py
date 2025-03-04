@@ -18,8 +18,8 @@ def send_to_gateway(message):
 @app.route('/upload', method=['POST'])
 def message_received():
     """Handles incoming messages from users"""
-    message_body = request.body.read()
-    print("Unformatted Message: " + str(message_body))
+    message_body = request.body.read().decode('utf-8')
+    print("Received Message: " + str(message_body))
 
     # Mirror the message to connected clients
     if message_body:

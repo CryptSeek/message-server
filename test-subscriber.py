@@ -17,7 +17,7 @@ def main():
         print("Subscriber connected")
 
         while True:
-            msg = subscriber.recv_string()[2:-1]  # List slice is to fix the b'' which gets erroneously added to the string by the server
+            msg = subscriber.recv_string()
             print(msg)
 
 
