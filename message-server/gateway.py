@@ -4,6 +4,7 @@ CryptSeek Gateway server, handles sending messages to all subscribers
 from bottle import Bottle, run, request, response, get, post, template
 import gevent
 import zmq.green as zmq
+import base64
 
 # Set up Bottle/gevent interaction
 from gevent import monkey
@@ -14,28 +15,29 @@ app = Bottle()
 # Create ZeroMQ publisher socket
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
+socket.bind("tcp://0.0.0.0:5555")       # Port for clients to receive messages
 
-def push_message(content):
+
+def push_message(encoded_content):
     """Spawned as a greenlet to push messages through ZMQ"""
-    print("Pushing Message: " + str(content))
-    message = str(content).encode("utf-8")
-    socket.send(message)
+    print("🔒 Relaying Encrypted Message...")
+    message = base64.b64decode(encoded_content).decode("utf-8")
+    socket.send_string(message)         # Relay message as-is
     return 'OK\n'
 
 
 @app.route('/upload', method=['POST'])
 def upload():
     """Receives messages from the bouncer and sends them to all subscribers"""
-    message_body = request.body.read().decode("utf-8")
+    encoded_message = request.body.read().decode("utf-8")
 
-    print("Gateway Received: " + str(message_body))
+    print("📡 Gateway Received Encrypted Message")
 
-    return gevent.spawn(push_message, message_body)
+    return gevent.spawn(push_message, encoded_message)
 
 
 def main():
-    print("Starting Gateway")
-    socket.bind("tcp://0.0.0.0:5555")
+    print("🚀 Starting Gateway...")
 
     app.run(
         host='0.0.0.0',

@@ -1,6 +1,7 @@
 from bottle import Bottle, run, request, response, get, post, template
 import requests
 import os
+import base64
 
 # HTTP server to receive messages from clients
 app = Bottle()
@@ -9,26 +10,30 @@ app = Bottle()
 # Gateway URL
 gateway = f'http://{os.environ["GATEWAY_ADDRESS"]}/upload'
 
+
 def send_to_gateway(message):
-    """Hand message off to gateway for transmission to subscribers"""
-    print("Sending message to gateway: " + str(message))
-    requests.post(gateway, data=message)
-    return 'OK\n'
+    """Relay encrypted message to gateway"""
+    print("🔒 Sending encrypted message to gateway...")
+    encoded_message = base64.b64encode(message.encode()).decode()       # Ensure message is properly encoded
+    response = requests.post(gateway, data=encoded_message)
+    return response.text
+
 
 @app.route('/upload', method=['POST'])
 def message_received():
-    """Handles incoming messages from users"""
+    """Receives encrypted messages from users"""
     message_body = request.body.read().decode('utf-8')
-    print("Received Message: " + str(message_body))
+    print("📩 Received Encrypted Message:" + str(message_body))
 
-    # Mirror the message to connected clients
+    # Forward message if valid
     if message_body:
         return send_to_gateway(message_body)
 
     return '500'
 
+
 def main():
-    print("Starting Bouncer")
+    print("🚀 Starting Bouncer...")
     print("GATEWAY_ADDRESS =", gateway)
     app.run(
         host='0.0.0.0',
