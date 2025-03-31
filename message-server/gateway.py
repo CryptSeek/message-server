@@ -20,10 +20,9 @@ socket.bind("tcp://0.0.0.0:5555")       # Port for clients to receive messages
 
 def push_message(encoded_content):
     """Spawned as a greenlet to push messages through ZMQ"""
-    print("🔒 Relaying Encrypted Message...")
+    print("Relaying Encrypted Message...")
     message = base64.b64decode(encoded_content).decode("utf-8")
     socket.send_string(message)         # Relay message as-is
-    return 'OK\n'
 
 
 @app.route('/upload', method=['POST'])
@@ -31,13 +30,15 @@ def upload():
     """Receives messages from the bouncer and sends them to all subscribers"""
     encoded_message = request.body.read().decode("utf-8")
 
-    print("📡 Gateway Received Encrypted Message")
+    print("Gateway Received Encrypted Message")
 
-    return gevent.spawn(push_message, encoded_message)
+    gevent.spawn(push_message, encoded_message)
+
+    return 'OK\n'
 
 
 def main():
-    print("🚀 Starting Gateway...")
+    print("Starting Gateway...")
 
     app.run(
         host='0.0.0.0',

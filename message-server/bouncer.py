@@ -23,7 +23,7 @@ def send_to_gateway(message):
 def message_received():
     """Receives encrypted messages from users"""
     message_body = request.body.read().decode('utf-8')
-    print("📩 Received Encrypted Message:" + str(message_body))
+    print("Received Encrypted Message:" + str(message_body))
 
     # Forward message if valid
     if message_body:
@@ -33,7 +33,7 @@ def message_received():
 
 
 def main():
-    print("🚀 Starting Bouncer...")
+    print("Starting Bouncer...")
     print("GATEWAY_ADDRESS =", gateway)
     app.run(
         host='0.0.0.0',
