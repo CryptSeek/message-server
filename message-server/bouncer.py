@@ -38,6 +38,7 @@ def main():
     app.run(
         host='0.0.0.0',
         port=9090,
+        server='gunicorn', workers=4,
     )
 
 
